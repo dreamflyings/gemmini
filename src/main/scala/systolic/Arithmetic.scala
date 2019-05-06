@@ -57,12 +57,16 @@ object Arithmetic {
         Mux(self >= 0.S, abs_result, 0.S - abs_result)
         */
 
+        /*
         val pos_offset = (1.U << (u-1.U)).asUInt()
         val neg_offset = ~((-1.S) << (u-1.U))
         val pos_sum = self + pos_offset.asSInt()
         val neg_sum = self + neg_offset.asSInt()
         Mux(u === 0.U, self,
             (Mux(self >= 0.S, pos_sum, neg_sum) >> u).asSInt)
+        */
+
+        (self >> u).asSInt
       }
 
       def withWidthOf(t: SInt) = self(t.getWidth-1, 0).asSInt()
