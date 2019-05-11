@@ -153,6 +153,18 @@ class MeshWithDelays[T <: Data: Arithmetic, U <: Data](inputType: T, val outputT
   val pause_vec = VecInit(Seq.fill(meshColumns)(VecInit(Seq.fill(tileColumns)(pause))))
   mesh.io.in_garbage := shifted(pause_vec, upBanks)
 
+  val garbage_counter_without_flush = RegInit(0.U(32.W))
+  val garbage_counter_with_flush = RegInit(0.U(32.W))
+  when (pause) {
+    garbage_counter_without_flush := garbage_counter_without_flush + 1.U
+    when (!flushing) {
+      garbage_counter_with_flush := garbage_counter_with_flush + 1.U
+    }
+  }
+  when (io.m === Dataflow.WS.id.U) {
+    printf(p"garbage_counter_with_flush = $garbage_counter_with_flush\ngarbage_counter_without_flush = $garbage_counter_without_flush\n")
+  }
+
   // We want to output C when we're output-stationary, but B when we're weight-stationary
   // TODO these would actually overlap when we switch from output-stationary to weight-stationary
   // TODO should we use io.m, or the mode output of the mesh?
