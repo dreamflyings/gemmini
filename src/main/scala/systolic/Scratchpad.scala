@@ -51,10 +51,10 @@ class DecoupledTLB(entries: Int)(implicit edge: TLEdgeOut, p: Parameters)
   when (state === s_tlb_resp) {
     val exception = Mux(req.cmd === M_XRD, tlb.io.resp.pf.ld || tlb.io.resp.ae.ld, tlb.io.resp.pf.st || tlb.io.resp.ae.st)
 
-    when (exception) {
+    /*when (exception) {
       resp := tlb.io.resp
       state := s_interrupt
-    } .elsewhen(tlb.io.resp.miss) {
+    } .else*/when(tlb.io.resp.miss) {
       state := s_tlb_req
     } .otherwise {
       resp := tlb.io.resp
