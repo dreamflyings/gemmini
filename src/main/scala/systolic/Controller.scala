@@ -183,7 +183,7 @@ class SystolicArrayModule[T <: Data: Arithmetic]
 
   // Wire up global RoCC signals
   io.busy := load_controller.io.busy || store_controller.io.busy
-  io.interrupt := tlb.io.exp.interrupt
+  // io.interrupt := tlb.io.exp.interrupt
 
   // Issue commands to controllers
   // TODO we combinationally couple cmd.ready and cmd.valid signals here
@@ -227,7 +227,7 @@ class SystolicArrayModule[T <: Data: Arithmetic]
         cmd.ready := true.B
       }
 
-      assert(is_ex, "unknown systolic command")
+      // assert(is_ex, "unknown systolic command")
     }
   }
 }

@@ -36,7 +36,8 @@ class DecoupledTLB(entries: Int)(implicit edge: TLEdgeOut, p: Parameters)
   val resp = Reg(new TLBResp)
   val tlb = Module(new TLB(false, lgMaxSize, TLBConfig(entries)))
 
-  val s_idle :: s_tlb_req :: s_tlb_resp :: s_done :: s_interrupt :: Nil = Enum(5)
+  // val s_idle :: s_tlb_req :: s_tlb_resp :: s_done :: s_interrupt :: Nil = Enum(5)
+  val s_idle :: s_tlb_req :: s_tlb_resp :: s_done :: Nil = Enum(4)
   val state = RegInit(s_idle)
 
   when (io.req.fire()) {
@@ -49,7 +50,7 @@ class DecoupledTLB(entries: Int)(implicit edge: TLEdgeOut, p: Parameters)
   }
 
   when (state === s_tlb_resp) {
-    val exception = Mux(req.cmd === M_XRD, tlb.io.resp.pf.ld || tlb.io.resp.ae.ld, tlb.io.resp.pf.st || tlb.io.resp.ae.st)
+    // val exception = Mux(req.cmd === M_XRD, tlb.io.resp.pf.ld || tlb.io.resp.ae.ld, tlb.io.resp.pf.st || tlb.io.resp.ae.st)
 
     /*when (exception) {
       resp := tlb.io.resp
@@ -62,17 +63,17 @@ class DecoupledTLB(entries: Int)(implicit edge: TLEdgeOut, p: Parameters)
     }
   }
 
-  when (state === s_interrupt) {
+  /*when (state === s_interrupt) {
     when (tlb.io.sfence.fire()) {
       state := Mux(io.exp.flush_retry, s_tlb_req, s_done)
     }
-  }
+  }*/
 
   when (io.resp.fire()) { state := s_idle }
 
   io.req.ready := state === s_idle
 
-  io.exp.interrupt := state === s_interrupt
+  io.exp.interrupt := false.B // state === s_interrupt
   tlb.io.sfence.valid := io.exp.flush
   tlb.io.sfence.bits.rs1 := false.B
   tlb.io.sfence.bits.rs2 := false.B
@@ -89,7 +90,7 @@ class DecoupledTLB(entries: Int)(implicit edge: TLEdgeOut, p: Parameters)
 
   io.ptw <> tlb.io.ptw
 
-  assert(!io.exp.flush_retry || !io.exp.flush_skip, "TLB: flushing with both retry and skip at same time")
+  // assert(!io.exp.flush_retry || !io.exp.flush_skip, "TLB: flushing with both retry and skip at same time")
 }
 
 class FrontendTLBIO(implicit p: Parameters) extends CoreBundle {
