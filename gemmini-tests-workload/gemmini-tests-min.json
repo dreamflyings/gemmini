@@ -1,0 +1,8 @@
+{
+  "name" : "gemmini-tests-min",
+  "workdir" : ".",
+  "base" : "br-base.json",
+  "overlay" : "overlay",
+  "host-init" : "host-init.sh",
+  "command": "/root/bareMetalC/aligned-linux"
+}
